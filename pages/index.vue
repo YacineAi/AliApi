@@ -14,26 +14,30 @@
         </div>
       </div>
 
-      <div v-if="cardData && !isLoading" class="w-full max-w-md mx-auto rounded-lg shadow-md bg-white p-4">
-        <div class="flex">
-          <div class="flex-shrink-0 w-32 h-32">
-            <img :src="cardData.cover" alt="Product Image" class="w-full h-full rounded-lg object-cover">
+      <div v-if="cardData && !isLoading" class="w-full max-w-3xl mx-auto rounded-lg shadow-md bg-white p-4 flex flex-col">
+        <div class="flex w-full items-center">
+          <div class="h-48 w-48 rounded-lg object-cover flex-shrink-0">
+            <img :src="cardData.cover" alt="Product Image" class="h-full w-full rounded-lg object-cover">
           </div>
-          <div class="flex flex-col justify-between ml-4">
+          <div class="flex flex-col justify-between ml-5">
             <div>
-              <h3 class="text-2xl font-bold text-gray-800">{{ cardData.price }}</h3>
+              <h3 class="text-2xl font-bold text-gray-800">{{ cardData.dzPrice }}</h3>
               <div class="flex items-center">
-                <div class="text-yellow-400">
-                  <!-- Render stars based on the rate (you can modify this based on your rating system) -->
-                  <!-- Replace 'cardData.rate' with your actual rating -->
-                  <!-- Example for a star icon: ★ -->
+                <p class="text-gray-500 mr-1 font-bold"> {{ cardData.rate }} </p>
+                <div class="text-yellow-400 text-xl">
+                  <template v-if="cardData.rate == 0.0"> ☆ </template>
+                  <template v-else>
+                    <span v-for="i in Math.floor(cardData.rate)" :key="i">★</span>
+                    <span v-if="cardData.rate % 1 !== 0">☆</span>
+                  </template>
                 </div>
-                <p class="text-gray-600 ml-1">{{ cardData.rate }}</p>
               </div>
               <p class="text-gray-700 mb-2">{{ cardData.name }}</p>
             </div>
-            <div class="text-center">
-              <a :href="cardData.link" class="inline-block px-4 py-2 rounded-lg bg-blue-400 text-white font-bold hover:bg-blue-500 focus:ring-2 focus:ring-blue-400">Read More</a>
+            
+            <div class="flex justify-end space-x-4 mt-4">
+              <a :href="cardData.link" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-500 focus:ring-2 focus:ring-blue-400"> Messenger</a>
+              <a :href="cardData.link" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-blue-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
             </div>
           </div>
         </div>
@@ -41,6 +45,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref } from 'vue';
