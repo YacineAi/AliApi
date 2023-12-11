@@ -8,60 +8,60 @@ export default defineEventHandler(async (event) => {
             if (data.discountPrice == "No discount Price") {
                 if (data.price < 1) {
                     var priceDz = data.price * 250;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 } else if (data.price < 10) {
                     var priceDz = data.price * 245;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 } else if (data.price < 100) {
                     var priceDz = data.price * 240;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 } else if (data.price > 100) {
                     var priceDz = data.price * 235;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 }
             } else {
                 if (data.discountPrice < 1) {
                     var priceDz = data.discountPrice * 250;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 } else if (data.discountPrice < 10) {
                     var priceDz = data.discountPrice * 245;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 } else if (data.discountPrice < 100) {
                     var priceDz = data.discountPrice * 240;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 } else if (data.discountPrice > 100) {
                     var priceDz = data.discountPrice * 235;
-                    return `${priceDz} DZD (شحن مجاني)`;
+                    return `${Math.ceil(priceDz)} DZD (شحن مجاني)`;
                 }
             }
         } else {
             if (data.discountPrice == "No discount Price") {
                 if (data.price < 1) {
                     var priceDz = (data.price + data.shipping) * 250;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 } else if (data.price < 10) {
                     var priceDz = (data.price + data.shipping) * 245;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 } else if (data.price < 100) {
                     var priceDz = (data.price + data.shipping) * 240;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 } else if (data.price > 100) {
                     var priceDz = (data.price + data.shipping) * 235;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 }
             } else {
                 if (data.discountPrice < 1) {
                     var priceDz = (data.discountPrice + data.shipping) * 250;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 } else if (data.discountPrice < 10) {
                     var priceDz = (data.discountPrice + data.shipping) * 245;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 } else if (data.discountPrice < 100) {
                     var priceDz = (data.discountPrice + data.shipping) * 240;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 } else if (data.discountPrice > 100) {
                     var priceDz = (data.discountPrice + data.shipping) * 235;
-                    return `${priceDz} DZD (مع الشحن)`;
+                    return `${Math.ceil(priceDz)} DZD (مع الشحن)`;
                 }
             }
         }

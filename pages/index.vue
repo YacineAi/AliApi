@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 min-h-screen flex flex-col justify-center">
+  <div class="bg-svg-background min-h-screen flex flex-col justify-center">
     <div class="container mx-auto flex flex-col items-center gap-y-4 md:gap-y-10">
       <div class="flex w-full md:w-1/2">
         <input v-model="searchQuery" type="text" placeholder="Search..." class="w-full rounded-lg bg-gray-50 px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400"/>
@@ -31,13 +31,19 @@
                     <span v-if="cardData.rate % 1 !== 0">☆</span>
                   </template>
                 </div>
+                <p class="text-sm text-gray-700 "> ({{ cardData.totalRates }})  </p>
               </div>
               <p class="text-gray-700 mb-2">{{ cardData.name }}</p>
+              <!-- New Details -->
+              <p class="text-gray-700"><span>&#11088;</span> Total Rates: {{ cardData.totalRates }} </p>
+              <p class="text-gray-700"><span>&#x1F389;</span> Sales: {{ cardData.sales }} </p>
+              <p class="text-gray-700"><span>&#x1F3E2;</span> Store: {{ cardData.store }} </p>
+              <p class="text-gray-700"><span>&#x2B50;</span> Store Rate: {{ cardData.storeRate }} </p>
             </div>
             
             <div class="flex justify-end space-x-4 mt-4">
-              <a :href="cardData.link" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-500 focus:ring-2 focus:ring-blue-400"> Messenger</a>
-              <a :href="cardData.link" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-blue-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
+              <a href="https://m.me/100093485946734" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"> Messenger</a>
+              <a href="https://wa.me/+213663712471" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
             </div>
           </div>
         </div>
@@ -81,5 +87,11 @@ const searchClicked = async () => {
   .container {
     flex-direction: column;
   }
+}
+.bg-svg-background {
+  background-image: url('https://svgshare.com/i/10cc.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
 }
 </style>
