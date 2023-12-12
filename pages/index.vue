@@ -1,8 +1,12 @@
 <template>
   <div class="bg-svg-background min-h-screen flex flex-col justify-center">
     <div class="text-center mb-20">
-      <span class="px-3 mt-10 mb-4 text-4xl font-bold rounded-lg bg-brand md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
-        Shop Form AliExpress using <span>&#x1F1E9;&#x1F1FF;</span> Dinar!
+      <span class="px-3 mb-4 text-4xl font-bold rounded-lg bg-brand md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+        Shop Form AliExpress using
+        <span class="group">
+          <span>&#x1F1E9;&#x1F1FF;</span> <!-- Wrapped the emoji within a separate span with group class -->
+        </span>
+        Dinar!
       </span>
     </div>
     <div class="container mx-auto flex flex-col items-center gap-y-10 md:gap-y-10 px-7">
