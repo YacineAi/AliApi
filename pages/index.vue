@@ -78,6 +78,34 @@
             </div>
           </div>
         </div>
+        <!-- Variant selection buttons without images -->
+  <!-- Variant selection buttons without images -->
+  <div v-if="variantButtonsValues.length > 0">
+    <template v-for="(variant, index) in variantButtonsValues" :key="index">
+      <div class="mt-4">
+        <p class="text-gray-700 font-semibold mb-2">{{ variant.skuPropertyName }}: {{ selectedVariantValues[index] }}</p>
+        <div class="flex flex-wrap gap-2">
+          <button v-for="(value, i) in variant.propertyValues" :key="i" @click="selectVariant(value, index)" :class="{ 'bg-gray-300': selectedVariantValues[index] === value, 'bg-gray-200': selectedVariantValues[index] !== value }" class="px-3 py-1 rounded-md hover:bg-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+            {{ value }}
+          </button>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Variant selection images -->
+  <div v-if="variantImagesValues.length > 0">
+    <template v-for="(variant, index) in variantImagesValues" :key="index">
+      <div class="mt-4">
+        <p class="text-gray-700 font-semibold mb-2">{{ variant.skuPropertyName }}: {{ selectedVariantImageValues[index]?.propertyValueName }}</p>
+        <div class="flex flex-wrap gap-2">
+          <div v-for="(value, i) in variant.skuPropertyImageSummPath" :key="i" @click="selectImageVariant(value, index, variant.skuPropertyName, variant[i])" class="rounded-md overflow-hidden w-12 h-12 cursor-pointer">
+            <img :src="value" :alt="value" class="w-full h-full object-cover" :class="{ 'border-2 border-blue-500': selectedVariantImageValues[index]?.skuPropertyImagePath === value }"/>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
       </div>
     </div>
   </div>
@@ -86,11 +114,15 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const searchQuery = ref('');
 const cardData = ref(null);
 const isLoading = ref(false);
+
+const selectedVariantValues = ref([]);
+const selectedVariantImageValues = ref([]);
+
 
 const searchClicked = async () => {
   try {
@@ -112,6 +144,68 @@ const searchClicked = async () => {
     isLoading.value = false;
   }
 };
+
+
+
+const hasImage = (prop) => {
+  return prop.skuPropertyValues && prop.skuPropertyValues.some(value => value.skuPropertyImageSummPath !== undefined);
+};
+
+
+const selectImageVariant = (value, index, propertyName, propertyValue) => {
+  if (!selectedVariantImageValues.value) {
+    selectedVariantImageValues.value = [];
+  }
+  selectedVariantImageValues.value.splice(index, 1, {
+    skuPropertyImagePath: value,
+    propertyValueName: propertyValue,
+    skuPropertyName: propertyName
+  });
+
+  cardData.value.cover = value;
+};
+
+const selectVariant = (value, index) => {
+  selectedVariantValues.value.splice(index, 1, value);
+
+};
+
+
+const extractPropertyValues = (prop) => {
+  return prop.skuPropertyValues.map(value => value.propertyValueDisplayName);
+};
+
+// Computed property to retrieve the values for variant buttons without images
+const variantButtonsValues = computed(() => {
+  if (cardData.value) {
+    return cardData.value.variants.props
+      .filter(prop => !hasImage(prop))
+      .map(prop => ({
+        skuPropertyName: prop.skuPropertyName,
+        propertyValues: extractPropertyValues(prop),
+        order: prop.order || 0 // Assign 0 if "order" is undefined
+      }))
+      .sort((a, b) => a.order - b.order); // Sort by "order" property
+  }
+  return [];
+});
+
+// Computed property to retrieve the values for variant images
+const variantImagesValues = computed(() => {
+  if (cardData.value) {
+    return cardData.value.variants.props
+      .filter(prop => hasImage(prop))
+      .map(prop => ({
+        skuPropertyName: prop.skuPropertyName,
+        skuPropertyImageSummPath: prop.skuPropertyValues.map(value => value.skuPropertyImagePath),
+        order: prop.order || 0 
+      }))
+      .sort((a, b) => a.order - b.order); // Sort by "order" property
+  }
+  return [];
+});
+
+
 </script>
 
 <style scoped>
