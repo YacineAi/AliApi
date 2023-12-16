@@ -53,7 +53,7 @@
           </div>
           <div class="flex flex-col justify-between ml-5">
             <div>
-              <h3 class="text-2xl font-bold text-gray-800">{{ cardData.dzPrice }}</h3>
+              <h3 class="text-2xl font-bold text-gray-800">{{ calcPrice() }}</h3>
               <div class="flex items-center">
                 <p class="text-gray-500 mr-1 font-bold"> {{ cardData.rate }} </p>
                 <div class="text-yellow-400 text-xl">
@@ -78,34 +78,37 @@
             </div>
           </div>
         </div>
+
         <!-- Variant selection buttons without images -->
-  <!-- Variant selection buttons without images -->
-  <div v-if="variantButtonsValues.length > 0">
-    <template v-for="(variant, index) in variantButtonsValues" :key="index">
+        <div v-if="cardData.variants.props.length > 0">
+    <template v-for="(variant, index) in cardData.variants.props" :key="index">
       <div class="mt-4">
-        <p class="text-gray-700 font-semibold mb-2">{{ variant.skuPropertyName }}: {{ selectedVariantValues[index] }}</p>
+        <p class="text-gray-700 font-semibold mb-2">
+          {{ variant.skuPropertyName }}: {{ getName(cardData.variants.defAttr, index) }}
+        </p>
         <div class="flex flex-wrap gap-2">
-          <button v-for="(value, i) in variant.propertyValues" :key="i" @click="selectVariant(value, index)" :class="{ 'bg-gray-300': selectedVariantValues[index] === value, 'bg-gray-200': selectedVariantValues[index] !== value }" class="px-3 py-1 rounded-md hover:bg-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-            {{ value }}
-          </button>
+          <template v-for="(value, vIndex) in variant.skuPropertyValues" :key="vIndex">
+            <div v-if="value.skuPropertyImageSummPath !== undefined">
+              <!-- If available is 0, make the image disabled -->
+              <img v-if="value.skuPropertyImageSummPath" :src="value.skuPropertyImageSummPath" :class="{ 'border-2 border-black': isImageSelected(index, vIndex), 'opacity-50 pointer-events-none': value.available == 0 }" @click="value.available !== 0 && setSelectedImage(index, vIndex)" class="w-12 h-12 object-cover rounded-lg"/>
+            </div>
+            <div v-else>
+              <!-- Disable the button and add a dashed border if available is 0 -->
+              <button
+                :disabled="value.available == 0"
+                :class="{ 'border-2 border-black': isButtonSelected(index, vIndex), 'opacity-50 pointer-events-none border-dashed': value.available == 0 }"
+                class="bg-gray-200 rounded-lg px-3 py-1"
+                @click="value.available !== 0 && setSelectedButton(index, vIndex)"
+              >
+                {{ value.skuPropertyTips }}
+              </button>
+            </div>
+          </template>
         </div>
       </div>
     </template>
   </div>
 
-  <!-- Variant selection images -->
-  <div v-if="variantImagesValues.length > 0">
-    <template v-for="(variant, index) in variantImagesValues" :key="index">
-      <div class="mt-4">
-        <p class="text-gray-700 font-semibold mb-2">{{ variant.skuPropertyName }}: {{ selectedVariantImageValues[index]?.propertyValueName }}</p>
-        <div class="flex flex-wrap gap-2">
-          <div v-for="(value, i) in variant.skuPropertyImageSummPath" :key="i" @click="selectImageVariant(value, index, variant.skuPropertyName, variant[i])" class="rounded-md overflow-hidden w-12 h-12 cursor-pointer">
-            <img :src="value" :alt="value" class="w-full h-full object-cover" :class="{ 'border-2 border-blue-500': selectedVariantImageValues[index]?.skuPropertyImagePath === value }"/>
-          </div>
-        </div>
-      </div>
-    </template>
-  </div>
       </div>
     </div>
   </div>
@@ -114,15 +117,126 @@
 
 
 <script setup>
-import { ref, computed } from 'vue';
 
 const searchQuery = ref('');
 const cardData = ref(null);
 const isLoading = ref(false);
 
-const selectedVariantValues = ref([]);
-const selectedVariantImageValues = ref([]);
+const selectedValues = ref([]);
+const selectedButtons = ref([]);
 
+
+const getName = (key, index) => {
+  const pairs = key.split(';');
+  const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
+    const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
+    if (matchingProp) {
+      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueId == propertyValueId);
+      if (matchingValue) {
+        return matchingValue.skuPropertyTips;
+      }
+    }
+  return 'nonValue';
+};
+
+//
+
+const isImageSelected = (index, vIndex) => {
+  return selectedValues.value[index] == vIndex;
+};
+
+const isButtonSelected = (index, vIndex) => {
+  return selectedButtons.value[index] == vIndex;
+};
+
+const setSelectedImage = (index, vIndex) => {
+  if (cardData.value.variants.props[index].skuPropertyValues.length == 1) {
+    return;
+  }
+
+  selectedValues.value[index] = vIndex;
+
+  const propPairs = cardData.value.variants.defAttr.split(';');
+  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
+  cardData.value.variants.defAttr = propPairs.join(';');
+};
+
+const setSelectedButton = (index, vIndex) => {
+  if (cardData.value.variants.props[index].skuPropertyValues.length == 1) { return; }
+
+  selectedButtons.value[index] = vIndex;
+
+  const propPairs = cardData.value.variants.defAttr.split(';');
+  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
+  cardData.value.variants.defAttr = propPairs.join(';');
+};
+
+const initializeSelectedImagesAndButtons = () => {
+  if (cardData.value && cardData.value.variants && cardData.value.variants.defAttr) {
+    const defAttrPairs = cardData.value.variants.defAttr.split(';');
+    defAttrPairs.forEach((pair, index) => {
+      const [skuPropertyId, propertyValueId] = pair.split(':');
+      const matchingProp = cardData.value.variants.props[index];
+
+      if (matchingProp) {
+        const matchingImageIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        if (matchingImageIndex !== -1) {
+          selectedValues.value[index] = matchingImageIndex;
+        }
+
+        const matchingButtonIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        if (matchingButtonIndex !== -1) {
+          selectedButtons.value[index] = matchingButtonIndex;
+        }
+      }
+    });
+  }
+};
+
+watch(cardData, () => {
+  initializeSelectedImagesAndButtons();
+});
+
+//
+
+
+
+/* calc */ 
+
+const calcPrice = () => {
+  if (!cardData.value || !cardData.value.variants || !cardData.value.variants.defAttr || !cardData.value.variants.propinfo) {
+    return 'Price not available';
+  }
+
+  const requiredAttributes = cardData.value.variants.defAttr.split(';').map(pair => pair.split(':')[1]);
+  
+  const matchingPropInfo = cardData.value.variants.propinfo.find(prop => {
+    const propAttributes = prop.attr.split(';').map(pair => pair.split(':')[1]);
+    return requiredAttributes.every(attr => propAttributes.includes(attr));
+  });
+
+  if (matchingPropInfo) {
+    const finalPrice = matchingPropInfo.price;
+
+    const shippingCost = cardData.value.shipping == 'Free Shipping' ? 0 : cardData.value.shipping;
+    
+    let totalPrice = finalPrice + shippingCost;
+
+    if (totalPrice < 1) {
+      totalPrice *= 250;
+    } else if (totalPrice < 10) {
+      totalPrice *= 245;
+    } else if (totalPrice < 100) {
+      totalPrice *= 240;
+    } else {
+      totalPrice *= 235;
+    }
+    return `${Math.ceil(totalPrice)} DZD (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})`;
+  } else {
+    return 'Price not available';
+  }
+};
+///////
 
 const searchClicked = async () => {
   try {
@@ -144,66 +258,6 @@ const searchClicked = async () => {
     isLoading.value = false;
   }
 };
-
-
-
-const hasImage = (prop) => {
-  return prop.skuPropertyValues && prop.skuPropertyValues.some(value => value.skuPropertyImageSummPath !== undefined);
-};
-
-
-const selectImageVariant = (value, index, propertyName, propertyValue) => {
-  if (!selectedVariantImageValues.value) {
-    selectedVariantImageValues.value = [];
-  }
-  selectedVariantImageValues.value.splice(index, 1, {
-    skuPropertyImagePath: value,
-    propertyValueName: propertyValue,
-    skuPropertyName: propertyName
-  });
-
-  cardData.value.cover = value;
-};
-
-const selectVariant = (value, index) => {
-  selectedVariantValues.value.splice(index, 1, value);
-
-};
-
-
-const extractPropertyValues = (prop) => {
-  return prop.skuPropertyValues.map(value => value.propertyValueDisplayName);
-};
-
-// Computed property to retrieve the values for variant buttons without images
-const variantButtonsValues = computed(() => {
-  if (cardData.value) {
-    return cardData.value.variants.props
-      .filter(prop => !hasImage(prop))
-      .map(prop => ({
-        skuPropertyName: prop.skuPropertyName,
-        propertyValues: extractPropertyValues(prop),
-        order: prop.order || 0 // Assign 0 if "order" is undefined
-      }))
-      .sort((a, b) => a.order - b.order); // Sort by "order" property
-  }
-  return [];
-});
-
-// Computed property to retrieve the values for variant images
-const variantImagesValues = computed(() => {
-  if (cardData.value) {
-    return cardData.value.variants.props
-      .filter(prop => hasImage(prop))
-      .map(prop => ({
-        skuPropertyName: prop.skuPropertyName,
-        skuPropertyImageSummPath: prop.skuPropertyValues.map(value => value.skuPropertyImagePath),
-        order: prop.order || 0 
-      }))
-      .sort((a, b) => a.order - b.order); // Sort by "order" property
-  }
-  return [];
-});
 
 
 </script>
