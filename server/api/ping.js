@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
             console.error('Ping failed');
           }
         });
-      }, 1 * 60 * 1000);
+      }, 5 * 60 * 1000);
 
       return { "status" : 200 }
 })
