@@ -305,7 +305,16 @@ const searchClicked = async () => {
   }
 };
 
+const startPing = async () => {
+  const { data, error } = await useFetch('/api/ping');
 
+  if (data) {
+    console.log("Started Monitoring...")
+    } else if (error) {
+      console.error(error);
+    }
+};
+startPing();
 </script>
 
 <style scoped>
