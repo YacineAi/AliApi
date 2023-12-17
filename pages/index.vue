@@ -2,7 +2,7 @@
   <div class="bg-svg-background min-h-screen flex flex-col justify-center">
     <div class="text-center mb-20">
       <span class="px-3 mb-4 text-4xl font-bold rounded-lg bg-brand md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
-        Shop Form AliExpress using</span>
+        Shop from AliExpress using</span>
         <span class="px-3 mb-4 text-4xl font-bold rounded-lg bg-brand md:text-5xl">&#x1F1E9;&#x1F1FF;</span>
       <span class="px-3 mb-4 text-4xl font-bold rounded-lg bg-brand md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Dinar!</span>
     </div>
@@ -31,13 +31,34 @@
             </div>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ cardData.dzPrice }}</h3>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ calcPrice() }}</h3>
             <p class="text-gray-700 mb-2">{{ cardData.name }}</p>
             <!-- Other details for mobile -->
             <p class="text-gray-700"><span>&#x1F389;</span> Sales: {{ cardData.sales }} </p>
             <p class="text-gray-700"><span>&#x1F3E2;</span> Store: {{ cardData.store }} </p>
             <p class="text-gray-700"><span>&#x2B50;</span> Store Rate: {{ cardData.storeRate }} </p>
           </div>
+          <!-- Variant selection buttons without images -->
+        <div v-if="cardData.variants.props.length > 0">
+          <template v-for="(variant, index) in cardData.variants.props" :key="index">
+            <div class="mt-4">
+              <p class="text-gray-700 font-semibold mb-2"> {{ variant.skuPropertyName }}: {{ getName(cardData.variants.defAttr, index) }} </p>
+              <div class="flex flex-wrap gap-2">
+                <template v-for="(value, vIndex) in variant.skuPropertyValues" :key="vIndex">
+                  <div v-if="value.skuPropertyImageSummPath !== undefined">
+                    <!-- If available is 0, make the image disabled -->
+                    <img v-if="value.skuPropertyImageSummPath" :src="value.skuPropertyImageSummPath" :class="getImgClasses(index, vIndex)" @click="setSelectedImage(index, vIndex)" class="w-12 h-12 object-cover rounded-lg"/>
+                  </div>
+                  <div v-else>
+                    <!-- Disable the button and add a dashed border if available is 0 -->
+                    <button :disabled="isPropertyValueUnavailable(index, vIndex)" :class="getButtonClasses(index, vIndex)" class="bg-gray-200 rounded-lg px-3 py-1" @click="value.available !== 0 && setSelectedButton(index, vIndex)"> {{ value.skuPropertyTips }} </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+        <!-- -->
           <div class="flex justify-center space-x-7 mt-4">
             <a href="https://m.me/100093485946734" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"> Messenger</a>
             <a href="https://wa.me/+213663712471" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
@@ -81,34 +102,25 @@
 
         <!-- Variant selection buttons without images -->
         <div v-if="cardData.variants.props.length > 0">
-    <template v-for="(variant, index) in cardData.variants.props" :key="index">
-      <div class="mt-4">
-        <p class="text-gray-700 font-semibold mb-2">
-          {{ variant.skuPropertyName }}: {{ getName(cardData.variants.defAttr, index) }}
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <template v-for="(value, vIndex) in variant.skuPropertyValues" :key="vIndex">
-            <div v-if="value.skuPropertyImageSummPath !== undefined">
-              <!-- If available is 0, make the image disabled -->
-              <img v-if="value.skuPropertyImageSummPath" :src="value.skuPropertyImageSummPath" :class="{ 'border-2 border-black': isImageSelected(index, vIndex), 'opacity-50 pointer-events-none': value.available == 0 }" @click="value.available !== 0 && setSelectedImage(index, vIndex)" class="w-12 h-12 object-cover rounded-lg"/>
-            </div>
-            <div v-else>
-              <!-- Disable the button and add a dashed border if available is 0 -->
-              <button
-                :disabled="value.available == 0"
-                :class="{ 'border-2 border-black': isButtonSelected(index, vIndex), 'opacity-50 pointer-events-none border-dashed': value.available == 0 }"
-                class="bg-gray-200 rounded-lg px-3 py-1"
-                @click="value.available !== 0 && setSelectedButton(index, vIndex)"
-              >
-                {{ value.skuPropertyTips }}
-              </button>
+          <template v-for="(variant, index) in cardData.variants.props" :key="index">
+            <div class="mt-4">
+              <p class="text-gray-700 font-semibold mb-2"> {{ variant.skuPropertyName }}: {{ getName(cardData.variants.defAttr, index) }} </p>
+              <div class="flex flex-wrap gap-2">
+                <template v-for="(value, vIndex) in variant.skuPropertyValues" :key="vIndex">
+                  <div v-if="value.skuPropertyImageSummPath !== undefined">
+                    <!-- If available is 0, make the image disabled -->
+                    <img v-if="value.skuPropertyImageSummPath" :src="value.skuPropertyImageSummPath" :class="getImgClasses(index, vIndex)" @click="setSelectedImage(index, vIndex)" class="w-12 h-12 object-cover rounded-lg"/>
+                  </div>
+                  <div v-else>
+                    <!-- Disable the button and add a dashed border if available is 0 -->
+                    <button :disabled="isPropertyValueUnavailable(index, vIndex)" :class="getButtonClasses(index, vIndex)" class="bg-gray-200 rounded-lg px-3 py-1" @click="value.available !== 0 && setSelectedButton(index, vIndex)"> {{ value.skuPropertyTips }} </button>
+                  </div>
+                </template>
+              </div>
             </div>
           </template>
         </div>
-      </div>
-    </template>
-  </div>
-
+        <!-- -->
       </div>
     </div>
   </div>
@@ -129,6 +141,7 @@ const selectedButtons = ref([]);
 const getName = (key, index) => {
   const pairs = key.split(';');
   const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
+  //console.log(skuPropertyId+":" + propertyValueId)
     const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
     if (matchingProp) {
       const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueId == propertyValueId);
@@ -140,6 +153,36 @@ const getName = (key, index) => {
 };
 
 //
+
+const isPropertyValueUnavailable = (index, vIndex) => {
+  //console.log("vIndex : ", vIndex)
+  const propPairs = cardData.value.variants.defAttr.split(';');
+  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
+  
+  // Find matching propinfo based on attr
+  const matchingPropInfo = cardData.value.variants.propinfo.find(prop => {
+    return prop.attr.includes(propPairs.join(';'));
+  });
+  //console.log(matchingPropInfo.attr)
+  return matchingPropInfo ? matchingPropInfo.available == 0 : false;
+};
+
+const getButtonClasses = (index, vIndex) => {
+  const isDisabled = isPropertyValueUnavailable(index, vIndex);
+  return {
+    'border-2 border-black': isButtonSelected(index, vIndex),
+    'opacity-50 pointer-events-none border-dashed': isDisabled,
+  };
+};
+
+const getImgClasses = (index, vIndex) => {
+  const isDisabled = isPropertyValueUnavailable(index, vIndex);
+  return {
+    'border-2 border-black': isImageSelected(index, vIndex),
+    'opacity-50 pointer-events-none': isDisabled,
+  };
+};
+
 
 const isImageSelected = (index, vIndex) => {
   return selectedValues.value[index] == vIndex;
@@ -159,6 +202,7 @@ const setSelectedImage = (index, vIndex) => {
   const propPairs = cardData.value.variants.defAttr.split(';');
   propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
   cardData.value.variants.defAttr = propPairs.join(';');
+  cardData.value.cover = cardData.value.variants.props[index].skuPropertyValues[vIndex].skuPropertyImagePath;
 };
 
 const setSelectedButton = (index, vIndex) => {
@@ -231,7 +275,9 @@ const calcPrice = () => {
     } else {
       totalPrice *= 235;
     }
-    return `${Math.ceil(totalPrice)} DZD (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})`;
+    //console.log(totalPrice)
+    // Math.round((totalPrice + 50 / 2) / 50) * 50
+    return `${Math.round((totalPrice + 50 / 2) / 50) * 50} DZD (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})`;
   } else {
     return 'Price not available';
   }
