@@ -9,7 +9,7 @@
     <div class="container mx-auto flex flex-col items-center gap-y-10 md:gap-y-10 px-7">
       <!-- Input and button -->
       <div class="flex flex-col md:flex-row w-full md:w-3/4">
-        <input v-model="searchQuery" type="text" placeholder="Search..." class="flex-grow rounded-lg bg-gray-50 px-4 py-2 mb-4 md:mb-0 md:mr-2 outline-none focus:ring-2 focus:ring-blue-400"/>
+        <input v-model="searchQuery" type="text" placeholder="https://a.aliexpress... Or 100XXXXXXXX" class="flex-grow rounded-lg bg-gray-50 px-4 py-2 mb-4 md:mb-0 md:mr-2 outline-none focus:ring-2 focus:ring-blue-400"/>
         <button @click="searchClicked" class="w-full md:w-auto px-4 py-2 rounded-lg bg-blue-400 text-white font-bold hover:bg-blue-500 focus:ring-2 focus:ring-blue-400">Search</button>
       </div>
 
@@ -22,9 +22,24 @@
         </div>
       </div>
 
+      
       <!-- Card data for mobile view -->
       <div v-if="cardData && !isLoading" class="w-full md:hidden">
-        <div class="bg-white p-4 rounded-lg shadow-md">
+        <div v-if="cardData.ok == false">
+          <div class="text-center bg-white p-4 rounded-lg shadow-md">
+            <p class="text-gray-500 mr-1 font-bold"> المنتج الذي أدخلته غير موجود! 🧐 </p>
+          </div>
+        </div>
+        <div v-else>
+          <div v-if="cardData.shippingInfo.dz == false">
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <div class="flex justify-center">
+              <p class="text-gray-500 mb-2 text-right">هذا المنتج لا يشحن للجزائر! 😞🚫</p>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="bg-white p-4 rounded-lg shadow-md">
           <div class="flex justify-center mb-4">
             <div class="w-48 h-48 rounded-lg overflow-hidden">
               <img :src="cardData.cover" alt="Product Image" class="h-full w-full object-cover">
@@ -64,11 +79,24 @@
             <a href="https://wa.me/+213663712471" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
           </div>
         </div>
+        </div>
+        </div>
       </div>
-
       <!-- Card data for desktop view -->
       <div v-if="cardData && !isLoading" class="w-full max-w-3xl mx-auto rounded-lg shadow-md bg-white p-4 md:p-6 hidden md:block">
-        <div class="flex w-full items-center">
+        <div v-if="cardData.ok == false">
+          <div class="text-center items-center">
+            <p class="text-gray-500 mr-1 font-bold"> المنتج الذي أدخلته غير موجود! 🧐 </p>
+          </div>
+        </div>
+        <div v-else>
+          <div v-if="cardData.shippingInfo.dz == false">
+            <div class="flex justify-center">
+              <p class="text-gray-500 mr-1 font-bold">هذا المنتج لا يشحن للجزائر! 😞🚫</p>
+            </div>
+        </div>
+        <div v-else>
+          <div class="flex w-full items-center">
           <div class="h-48 w-48 rounded-lg object-cover flex-shrink-0">
             <img :src="cardData.cover" alt="Product Image" class="h-full w-full rounded-lg object-cover">
           </div>
@@ -121,6 +149,9 @@
           </template>
         </div>
         <!-- -->
+        </div>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -284,11 +315,27 @@ const calcPrice = () => {
 };
 ///////
 
+
+const extractURL = (text) => {
+        const urlRegex = /(https?:\/\/[^\s]+)/;
+        const numberRegex = /^\d+$/;
+        if (numberRegex.test(text)) {
+            return text;
+        } else {
+            const matches = text.match(urlRegex);
+            if (matches && matches.length > 0) {
+                return matches[0]; // Return the extracted URL
+            } else {
+                return null; // No URL found
+            } 
+        }
+    };
+    
 const searchClicked = async () => {
   try {
     isLoading.value = true;
     const { data, error } = await useFetch('/api/get', {
-      query: { url: searchQuery.value },
+      query: { url: extractURL(searchQuery.value) },
     });
 
     if (data) {
@@ -305,16 +352,6 @@ const searchClicked = async () => {
   }
 };
 
-const startPing = async () => {
-  const { data, error } = await useFetch('/api/ping');
-
-  if (data) {
-    console.log("Started Monitoring...")
-    } else if (error) {
-      console.error(error);
-    }
-};
-startPing();
 </script>
 
 <style scoped>
