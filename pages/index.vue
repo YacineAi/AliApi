@@ -103,6 +103,7 @@
           <div class="flex flex-col justify-between ml-5">
             <div>
               <h3 class="text-2xl font-bold text-gray-800">{{ calcPrice() }}</h3>
+              <h2 class="text-xm text-gray-600">+ {{ calcShipping() }}</h2>
               <div class="flex items-center">
                 <p class="text-gray-500 mr-1 font-bold"> {{ cardData.rate }} </p>
                 <div class="text-yellow-400 text-xl">
@@ -291,26 +292,61 @@ const calcPrice = () => {
   });
 
   if (matchingPropInfo) {
-    const finalPrice = matchingPropInfo.price;
+    let finalPrice = matchingPropInfo.price;
 
     const shippingCost = cardData.value.shipping == 'Free Shipping' ? 0 : cardData.value.shipping;
     
     let totalPrice = finalPrice + shippingCost;
 
     if (totalPrice < 1) {
-      totalPrice *= 250;
+      finalPrice *= 250;
     } else if (totalPrice < 10) {
-      totalPrice *= 245;
+      finalPrice *= 245;
     } else if (totalPrice < 100) {
-      totalPrice *= 240;
+      finalPrice *= 240;
     } else {
-      totalPrice *= 235;
+      finalPrice *= 235;
     }
     //console.log(totalPrice)
     // Math.round((totalPrice + 50 / 2) / 50) * 50
-    return `${Math.round((totalPrice + 50 / 2) / 50) * 50} DZD (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})`;
+    // (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})
+    return `${Math.round((finalPrice + 50 / 2) / 50) * 50} DZD`;
   } else {
     return 'Price not available';
+  }
+};
+
+const calcShipping = () => {
+  if (!cardData.value || !cardData.value.variants || !cardData.value.variants.defAttr || !cardData.value.variants.propinfo) {
+    return 'Price not available';
+  }
+
+  const requiredAttributes = cardData.value.variants.defAttr.split(';').map(pair => pair.split(':')[1]);
+  
+  const matchingPropInfo = cardData.value.variants.propinfo.find(prop => {
+    const propAttributes = prop.attr.split(';').map(pair => pair.split(':')[1]);
+    return requiredAttributes.every(attr => propAttributes.includes(attr));
+  });
+
+  if (cardData.value.shipping == "Free Shipping") {
+    return "(شحن مجاني)";
+  } else {
+    const finalPrice = matchingPropInfo.price;
+    let shippingCost = cardData.value.shipping;
+    console.log(finalPrice)
+    let totalPrice = finalPrice + cardData.value.shipping;
+
+    if (totalPrice < 1) {
+      shippingCost *= 250;
+    } else if (totalPrice < 10) {
+      shippingCost *= 245;
+    } else if (totalPrice < 100) {
+      shippingCost *= 240;
+    } else {
+      shippingCost *= 235;
+    }
+
+    return `${Math.round((shippingCost + 50 / 2) / 50) * 50} DZD (سعر الشحن)`;
   }
 };
 ///////
