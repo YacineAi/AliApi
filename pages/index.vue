@@ -31,14 +31,6 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="cardData.shippingInfo.dz == false">
-          <div class="bg-white p-4 rounded-lg shadow-md">
-            <div class="flex justify-center">
-              <p class="text-gray-500 mb-2 text-right">هذا المنتج لا يشحن للجزائر! 😞🚫</p>
-            </div>
-          </div>
-        </div>
-        <div v-else>
           <div class="bg-white p-4 rounded-lg shadow-md">
           <div class="flex justify-center mb-4">
             <div class="w-48 h-48 rounded-lg overflow-hidden">
@@ -46,7 +38,13 @@
             </div>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ calcPrice() }}</h3>
+            <div v-if="cardData.shippingInfo.dz == false">
+              <h3 class="text-2xl font-bold text-gray-800 mb-2">!هذا المنتج لا يشحن للجزائر</h3>
+            </div>
+            <div v-else>
+              <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ calcPrice() }}</h3>
+              <h2 class="text-xm text-gray-600 mb-2">+ {{ calcShipping() }}</h2>
+            </div>
             <p class="text-gray-700 mb-2">{{ cardData.name }}</p>
             <!-- Other details for mobile -->
             <p class="text-gray-700"><span>&#x1F389;</span> Sales: {{ cardData.sales }} </p>
@@ -80,7 +78,6 @@
           </div>
         </div>
         </div>
-        </div>
       </div>
       <!-- Card data for desktop view -->
       <div v-if="cardData && !isLoading" class="w-full max-w-3xl mx-auto rounded-lg shadow-md bg-white p-4 md:p-6 hidden md:block">
@@ -90,20 +87,19 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="cardData.shippingInfo.dz == false">
-            <div class="flex justify-center">
-              <p class="text-gray-500 mr-1 font-bold">هذا المنتج لا يشحن للجزائر! 😞🚫</p>
-            </div>
-        </div>
-        <div v-else>
           <div class="flex w-full items-center">
           <div class="h-48 w-48 rounded-lg object-cover flex-shrink-0">
             <img :src="cardData.cover" alt="Product Image" class="h-full w-full rounded-lg object-cover">
           </div>
           <div class="flex flex-col justify-between ml-5">
             <div>
-              <h3 class="text-2xl font-bold text-gray-800">{{ calcPrice() }}</h3>
-              <h2 class="text-xm text-gray-600">+ {{ calcShipping() }}</h2>
+              <div v-if="cardData.shippingInfo.dz == false">
+                <h3 class="text-2xl font-bold text-gray-800">!هذا المنتج لا يشحن للجزائر</h3>
+              </div>
+              <div v-else>
+                <h3 class="text-2xl font-bold text-gray-800">{{ calcPrice() }}</h3>
+                <h2 class="text-xm text-gray-600">+ {{ calcShipping() }}</h2>
+              </div>
               <div class="flex items-center">
                 <p class="text-gray-500 mr-1 font-bold"> {{ cardData.rate }} </p>
                 <div class="text-yellow-400 text-xl">
@@ -150,7 +146,6 @@
           </template>
         </div>
         <!-- -->
-        </div>
         </div>
         
       </div>
