@@ -51,6 +51,22 @@
             <p class="text-gray-700"><span>&#x1F3E2;</span> Store: {{ cardData.store }} </p>
             <p class="text-gray-700"><span>&#x2B50;</span> Store Rate: {{ cardData.storeRate }} </p>
           </div>
+          <div class="flex items-center gap-2">
+          <button :disabled="items === 1" title="Remove" class="group cursor-pointer outline-none" @click="removeItem">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" class="stroke-zinc-400 fill-none">
+              <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke-width="1.5"></path>
+              <path d="M8 12H16" stroke-width="1.5"></path>
+            </svg>
+          </button>
+          <p>{{ items }}</p>
+          <button title="Add" class="group cursor-pointer outline-none" @click="addItem">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" class="stroke-zinc-400 fill-none">
+              <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke-width="1.5"></path>
+              <path d="M8 12H16" stroke-width="1.5"></path>
+              <path d="M12 16V8" stroke-width="1.5"></path>
+            </svg>
+          </button>
+        </div>
           <!-- Variant selection buttons without images -->
         <div v-if="cardData.variants.props.length > 0">
           <template v-for="(variant, index) in cardData.variants.props" :key="index">
@@ -73,8 +89,8 @@
         </div>
         <!-- -->
           <div class="flex justify-center space-x-7 mt-4">
-            <a href="https://m.me/100093485946734" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"> Messenger</a>
-            <a href="https://wa.me/+213663712471" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
+            <a href="https://m.me/ozerve.shop" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"> Messenger</a>
+            <a href="https://wa.me/+213668219714" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
           </div>
         </div>
         </div>
@@ -119,12 +135,27 @@
             </div>
             
             <div class="flex justify-end space-x-4 mt-4">
-              <a href="https://m.me/100093485946734" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"> Messenger</a>
-              <a href="https://wa.me/+213663712471" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
+              <a href="https://m.me/ozerve.shop" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"> Messenger</a>
+              <a href="https://wa.me/+213668219714" class="px-4 py-2 rounded-lg bg-green-400 text-white font-bold hover:bg-green-500 focus:ring-2 focus:ring-blue-400"> WhatsApp</a>
             </div>
           </div>
         </div>
-
+        <div class="flex items-center gap-2">
+          <button :disabled="items === 1" title="Remove" class="group cursor-pointer outline-none" @click="removeItem">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" class="stroke-zinc-400 fill-none">
+              <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke-width="1.5"></path>
+              <path d="M8 12H16" stroke-width="1.5"></path>
+            </svg>
+          </button>
+          <p>{{ items }}</p>
+          <button title="Add" class="group cursor-pointer outline-none" @click="addItem">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" class="stroke-zinc-400 fill-none">
+              <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke-width="1.5"></path>
+              <path d="M8 12H16" stroke-width="1.5"></path>
+              <path d="M12 16V8" stroke-width="1.5"></path>
+            </svg>
+          </button>
+        </div>
         <!-- Variant selection buttons without images -->
         <div v-if="cardData.variants.props.length > 0">
           <template v-for="(variant, index) in cardData.variants.props" :key="index">
@@ -156,19 +187,40 @@
 
 
 <script setup>
+import ratesData from '~/assets/rates.json';
+
+const rateLessThanOne = ratesData['-1$'];
+const rateLessThanTen = ratesData['-10$'];
+const rateLessThanHundred = ratesData['-100$'];
+const rateHundredAndAbove = ratesData['+100$'];
 
 const searchQuery = ref('');
 const cardData = ref(null);
 const isLoading = ref(false);
+const items = ref(1);;
 
 const selectedValues = ref([]);
 const selectedButtons = ref([]);
 
 
+const addItem = () => {
+  items.value++; // Increment items
+};
+
+const removeItem = () => {
+  if (items.value > 0) {
+    items.value--; // Decrement items only if it's greater than 0
+  }
+};
+
 const getName = (key, index) => {
-  const pairs = key.split(';');
-  const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
-  //console.log(skuPropertyId+":" + propertyValueId)
+
+  if (cardData.value.variants.shippingid != "Auto") {
+    const clean = key.replace(`${cardData.value.variants.shippingid};`, "").replace(`;${cardData.value.variants.shippingid}`, "")
+    const pairs = clean.split(';');
+    console.log("prop index : ", pairs[index])
+    const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
+    //console.log(skuPropertyId+":" + propertyValueId)
     const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
     if (matchingProp) {
       const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueId == propertyValueId);
@@ -177,6 +229,20 @@ const getName = (key, index) => {
       }
     }
   return 'nonValue';
+  } else {
+    const pairs = key.split(';');
+    console.log("prop index : ", pairs[index])
+    const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
+    //console.log(skuPropertyId+":" + propertyValueId)
+    const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
+    if (matchingProp) {
+      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueId == propertyValueId);
+      if (matchingValue) {
+        return matchingValue.skuPropertyTips;
+      }
+    }
+  return 'nonValue';
+  }
 };
 
 //
@@ -225,7 +291,6 @@ const setSelectedImage = (index, vIndex) => {
   }
 
   selectedValues.value[index] = vIndex;
-
   const propPairs = cardData.value.variants.defAttr.split(';');
   propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
   cardData.value.variants.defAttr = propPairs.join(';');
@@ -243,7 +308,29 @@ const setSelectedButton = (index, vIndex) => {
 };
 
 const initializeSelectedImagesAndButtons = () => {
-  if (cardData.value && cardData.value.variants && cardData.value.variants.defAttr) {
+  if (cardData.value.variants.shippingid != "Auto") {
+    if (cardData.value && cardData.value.variants && cardData.value.variants.defAttr) {
+      const clean = cardData.value.variants.defAttr.replace(`${cardData.value.variants.shippingid};`, "").replace(`;${cardData.value.variants.shippingid}`, "")
+      const defAttrPairs = clean.split(';');
+    defAttrPairs.forEach((pair, index) => {
+      const [skuPropertyId, propertyValueId] = pair.split(':');
+      const matchingProp = cardData.value.variants.props[index];
+
+      if (matchingProp) {
+        const matchingImageIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        if (matchingImageIndex !== -1) {
+          selectedValues.value[index] = matchingImageIndex;
+        }
+
+        const matchingButtonIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        if (matchingButtonIndex !== -1) {
+          selectedButtons.value[index] = matchingButtonIndex;
+        }
+      }
+    });
+  }
+  } else {
+    if (cardData.value && cardData.value.variants && cardData.value.variants.defAttr) {
     const defAttrPairs = cardData.value.variants.defAttr.split(';');
     defAttrPairs.forEach((pair, index) => {
       const [skuPropertyId, propertyValueId] = pair.split(':');
@@ -261,6 +348,7 @@ const initializeSelectedImagesAndButtons = () => {
         }
       }
     });
+  }
   }
 };
 
@@ -294,18 +382,19 @@ const calcPrice = () => {
     let totalPrice = finalPrice + shippingCost;
 
     if (totalPrice < 1) {
-      finalPrice *= 250;
+      finalPrice *= rateLessThanOne;
     } else if (totalPrice < 10) {
-      finalPrice *= 245;
+      finalPrice *= rateLessThanTen;
     } else if (totalPrice < 100) {
-      finalPrice *= 240;
+      finalPrice *= rateLessThanHundred;
     } else {
-      finalPrice *= 235;
+      finalPrice *= rateHundredAndAbove;
     }
     //console.log(totalPrice)
     // Math.round((totalPrice + 50 / 2) / 50) * 50
     // (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})
-    return `${Math.round((finalPrice + 50 / 2) / 50) * 50} DZD`;
+    const one = Math.round((finalPrice + 50 / 2) / 50) * 50;
+    return `${one * items.value} DZD`;
   } else {
     return 'Price not available';
   }
@@ -332,13 +421,13 @@ const calcShipping = () => {
     let totalPrice = finalPrice + cardData.value.shipping;
 
     if (totalPrice < 1) {
-      shippingCost *= 250;
+      shippingCost *= rateLessThanOne;
     } else if (totalPrice < 10) {
-      shippingCost *= 245;
+      shippingCost *= rateLessThanTen;
     } else if (totalPrice < 100) {
-      shippingCost *= 240;
+      shippingCost *= rateLessThanHundred;
     } else {
-      shippingCost *= 235;
+      shippingCost *= rateHundredAndAbove;
     }
 
     return `${Math.round((shippingCost + 50 / 2) / 50) * 50} DZD (سعر الشحن)`;
