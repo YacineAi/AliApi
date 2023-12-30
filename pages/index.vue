@@ -472,6 +472,16 @@ const searchClicked = async () => {
   }
 };
 
+
+
+useSeoMeta({
+  title: 'Ozerve Store',
+  ogTitle: 'Ozerve Store',
+  description: 'Shop from AliExpress using 🇩🇿 Dinar!',
+  ogDescription: 'Shop from AliExpress using 🇩🇿 Dinar!',
+  ogImage: 'https://i.ibb.co/8xnDMGG/Manfaat-Toko-Online.jpg',
+})
+
 </script>
 
 <style scoped>
@@ -481,7 +491,7 @@ const searchClicked = async () => {
   }
 }
 .bg-svg-background {
-  background-image: url('https://svgshare.com/i/10cc.svg');
+  background-image: url('/back.svg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top;
