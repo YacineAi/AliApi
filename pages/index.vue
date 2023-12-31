@@ -189,10 +189,10 @@
 <script setup>
 import ratesData from '~/assets/rates.json';
 
-const rateLessThanOne = ratesData['-1$'];
-const rateLessThanTen = ratesData['-10$'];
-const rateLessThanHundred = ratesData['-100$'];
-const rateHundredAndAbove = ratesData['+100$'];
+const rateLessThanOne = ratesData[0]['rate'];
+const rateLessThanTen = ratesData[1]['rate'];
+const rateLessThanHundred = ratesData[2]['rate'];
+const rateHundredAndAbove = ratesData[3]['rate'];
 
 const searchQuery = ref('');
 const cardData = ref(null);
