@@ -68,7 +68,7 @@
           </button>
         </div>
           <!-- Variant selection buttons without images -->
-        <div v-if="cardData.variants.props.length > 0">
+        <div v-if="cardData.variants.props != 'No SKU property available'">
           <template v-for="(variant, index) in cardData.variants.props" :key="index">
             <div class="mt-4">
               <p class="text-gray-700 font-semibold mb-2"> {{ variant.skuPropertyName }}: {{ getName(cardData.variants.defAttr, index) }} </p>
@@ -157,7 +157,7 @@
           </button>
         </div>
         <!-- Variant selection buttons without images -->
-        <div v-if="cardData.variants.props.length > 0">
+        <div v-if="cardData.variants.props != 'No SKU property available'">
           <template v-for="(variant, index) in cardData.variants.props" :key="index">
             <div class="mt-4">
               <p class="text-gray-700 font-semibold mb-2"> {{ variant.skuPropertyName }}: {{ getName(cardData.variants.defAttr, index) }} </p>
@@ -364,6 +364,25 @@ watch(cardData, () => {
 
 const calcPrice = () => {
   if (!cardData.value || !cardData.value.variants || !cardData.value.variants.defAttr || !cardData.value.variants.propinfo) {
+    if (cardData.value.variants == "No SKU property available") {
+      let finalPrice = cardData.value.discountPrice != "No discount Price" || cardData.value.price;
+      const shippingCost = cardData.value.shipping == 'Free Shipping' ? 0 : cardData.value.shipping;
+      let totalPrice = finalPrice + shippingCost;
+      if (totalPrice < 1) {
+        finalPrice *= rateLessThanOne;
+      } else if (totalPrice < 10) {
+        finalPrice *= rateLessThanTen;
+      } else if (totalPrice < 100) {
+        finalPrice *= rateLessThanHundred;
+      } else {
+        finalPrice *= rateHundredAndAbove;
+      }
+      //console.log(totalPrice)
+      // Math.round((totalPrice + 50 / 2) / 50) * 50
+      // (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})
+      const one = Math.round((finalPrice + 50 / 2) / 50) * 50;
+      return `${one * items.value} DZD`;
+    }
     return 'Price not available';
   }
 
@@ -402,6 +421,27 @@ const calcPrice = () => {
 
 const calcShipping = () => {
   if (!cardData.value || !cardData.value.variants || !cardData.value.variants.defAttr || !cardData.value.variants.propinfo) {
+    if (cardData.value.variants == "No SKU property available") {
+      if (cardData.value.shipping == "Free Shipping") {
+        return "(شحن مجاني)";
+      } else {
+        const finalPrice = cardData.value.discountPrice != "No discount Price" || cardData.value.price;
+        let shippingCost = cardData.value.shipping;
+        console.log(finalPrice)
+        let totalPrice = finalPrice + cardData.value.shipping;
+        
+        if (totalPrice < 1) {
+          shippingCost *= rateLessThanOne;
+        } else if (totalPrice < 10) {
+          shippingCost *= rateLessThanTen;
+        } else if (totalPrice < 100) {
+          shippingCost *= rateLessThanHundred;
+        } else {
+          shippingCost *= rateHundredAndAbove;
+        }
+        return `${Math.round((shippingCost + 50 / 2) / 50) * 50} DZD (سعر الشحن)`;
+      }
+    }
     return 'Price not available';
   }
 
