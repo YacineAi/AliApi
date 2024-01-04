@@ -189,10 +189,9 @@
 <script setup>
 import ratesData from '~/assets/rates.json';
 
-const rateLessThanOne = ratesData[0]['rate'];
-const rateLessThanTen = ratesData[1]['rate'];
-const rateLessThanHundred = ratesData[2]['rate'];
-const rateHundredAndAbove = ratesData[3]['rate'];
+const rateLessThanTen = ratesData[0]['rate'];
+const rateLessThanHundred = ratesData[1]['rate'];
+const rateHundredAndAbove = ratesData[2]['rate'];
 
 const searchQuery = ref('');
 const cardData = ref(null);
@@ -365,19 +364,17 @@ watch(cardData, () => {
 const calcPrice = () => {
   if (!cardData.value || !cardData.value.variants || !cardData.value.variants.defAttr || !cardData.value.variants.propinfo) {
     if (cardData.value.variants == "No SKU property available") {
-      let finalPrice = cardData.value.discountPrice != "No discount Price" || cardData.value.price;
+      let finalPrice = cardData.value.discountPrice != "No discount Price" && cardData.value.discountPrice || cardData.value.price;
       const shippingCost = cardData.value.shipping == 'Free Shipping' ? 0 : cardData.value.shipping;
       let totalPrice = finalPrice + shippingCost;
-      if (totalPrice < 1) {
-        finalPrice *= rateLessThanOne;
-      } else if (totalPrice < 10) {
+      if (totalPrice < 10) {
         finalPrice *= rateLessThanTen;
       } else if (totalPrice < 100) {
         finalPrice *= rateLessThanHundred;
       } else {
         finalPrice *= rateHundredAndAbove;
       }
-      //console.log(totalPrice)
+      console.log(rateLessThanTen)
       // Math.round((totalPrice + 50 / 2) / 50) * 50
       // (${cardData.value.shipping == 'Free Shipping' ? 'شحن مجاني' : 'مع الشحن'})
       const one = Math.round((finalPrice + 50 / 2) / 50) * 50;
@@ -400,9 +397,7 @@ const calcPrice = () => {
     
     let totalPrice = finalPrice + shippingCost;
 
-    if (totalPrice < 1) {
-      finalPrice *= rateLessThanOne;
-    } else if (totalPrice < 10) {
+    if (totalPrice < 10) {
       finalPrice *= rateLessThanTen;
     } else if (totalPrice < 100) {
       finalPrice *= rateLessThanHundred;
@@ -425,14 +420,12 @@ const calcShipping = () => {
       if (cardData.value.shipping == "Free Shipping") {
         return "(شحن مجاني)";
       } else {
-        const finalPrice = cardData.value.discountPrice != "No discount Price" || cardData.value.price;
+        const finalPrice = cardData.value.discountPrice != "No discount Price" && cardData.value.discountPrice || cardData.value.price;
         let shippingCost = cardData.value.shipping;
         console.log(finalPrice)
         let totalPrice = finalPrice + cardData.value.shipping;
         
-        if (totalPrice < 1) {
-          shippingCost *= rateLessThanOne;
-        } else if (totalPrice < 10) {
+        if (totalPrice < 10) {
           shippingCost *= rateLessThanTen;
         } else if (totalPrice < 100) {
           shippingCost *= rateLessThanHundred;
@@ -460,9 +453,7 @@ const calcShipping = () => {
     console.log(finalPrice)
     let totalPrice = finalPrice + cardData.value.shipping;
 
-    if (totalPrice < 1) {
-      shippingCost *= rateLessThanOne;
-    } else if (totalPrice < 10) {
+    if (totalPrice < 10) {
       shippingCost *= rateLessThanTen;
     } else if (totalPrice < 100) {
       shippingCost *= rateLessThanHundred;
