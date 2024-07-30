@@ -222,7 +222,7 @@ const getName = (key, index) => {
     //console.log(skuPropertyId+":" + propertyValueId)
     const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
     if (matchingProp) {
-      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueId == propertyValueId);
+      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueIdLong == propertyValueId);
       if (matchingValue) {
         return matchingValue.skuPropertyTips;
       }
@@ -235,7 +235,7 @@ const getName = (key, index) => {
     //console.log(skuPropertyId+":" + propertyValueId)
     const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
     if (matchingProp) {
-      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueId == propertyValueId);
+      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueIdLong == propertyValueId);
       if (matchingValue) {
         return matchingValue.skuPropertyTips;
       }
@@ -316,12 +316,12 @@ const initializeSelectedImagesAndButtons = () => {
       const matchingProp = cardData.value.variants.props[index];
 
       if (matchingProp) {
-        const matchingImageIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        const matchingImageIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueIdLong == propertyValueId);
         if (matchingImageIndex !== -1) {
           selectedValues.value[index] = matchingImageIndex;
         }
 
-        const matchingButtonIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        const matchingButtonIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueIdLong == propertyValueId);
         if (matchingButtonIndex !== -1) {
           selectedButtons.value[index] = matchingButtonIndex;
         }
@@ -336,12 +336,12 @@ const initializeSelectedImagesAndButtons = () => {
       const matchingProp = cardData.value.variants.props[index];
 
       if (matchingProp) {
-        const matchingImageIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        const matchingImageIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueIdLong == propertyValueId);
         if (matchingImageIndex !== -1) {
           selectedValues.value[index] = matchingImageIndex;
         }
 
-        const matchingButtonIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueId == propertyValueId);
+        const matchingButtonIndex = matchingProp.skuPropertyValues.findIndex(value => value.propertyValueIdLong == propertyValueId);
         if (matchingButtonIndex !== -1) {
           selectedButtons.value[index] = matchingButtonIndex;
         }
