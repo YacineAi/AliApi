@@ -249,7 +249,7 @@ const getName = (key, index) => {
 const isPropertyValueUnavailable = (index, vIndex) => {
   //console.log("vIndex : ", vIndex)
   const propPairs = cardData.value.variants.defAttr.split(';');
-  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
+  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueIdLong}`;
   
   // Find matching propinfo based on attr
   const matchingPropInfo = cardData.value.variants.propinfo.find(prop => {
@@ -291,7 +291,7 @@ const setSelectedImage = (index, vIndex) => {
 
   selectedValues.value[index] = vIndex;
   const propPairs = cardData.value.variants.defAttr.split(';');
-  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
+  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueIdLong}`;
   cardData.value.variants.defAttr = propPairs.join(';');
   cardData.value.cover = cardData.value.variants.props[index].skuPropertyValues[vIndex].skuPropertyImagePath;
 };
@@ -302,7 +302,7 @@ const setSelectedButton = (index, vIndex) => {
   selectedButtons.value[index] = vIndex;
 
   const propPairs = cardData.value.variants.defAttr.split(';');
-  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueId}`;
+  propPairs[index] = `${cardData.value.variants.props[index].skuPropertyId}:${cardData.value.variants.props[index].skuPropertyValues[vIndex].propertyValueIdLong}`;
   cardData.value.variants.defAttr = propPairs.join(';');
 };
 
@@ -422,7 +422,7 @@ const calcShipping = () => {
       } else {
         const finalPrice = cardData.value.discountPrice != "No discount Price" && cardData.value.discountPrice || cardData.value.price;
         let shippingCost = cardData.value.shipping;
-        console.log(finalPrice)
+        console.log(cardData)
         let totalPrice = finalPrice + cardData.value.shipping;
         
         if (totalPrice < 10) {
@@ -442,15 +442,17 @@ const calcShipping = () => {
   
   const matchingPropInfo = cardData.value.variants.propinfo.find(prop => {
     const propAttributes = prop.attr.split(';').map(pair => pair.split(':')[1]);
+    console.log(requiredAttributes)
     return requiredAttributes.every(attr => propAttributes.includes(attr));
   });
 
   if (cardData.value.shipping == "Free Shipping") {
     return "(شحن مجاني)";
   } else {
+    console.log("Log :", matchingPropInfo)
     const finalPrice = matchingPropInfo.price;
     let shippingCost = cardData.value.shipping;
-    console.log(finalPrice)
+    
     let totalPrice = finalPrice + cardData.value.shipping;
 
     if (totalPrice < 10) {
