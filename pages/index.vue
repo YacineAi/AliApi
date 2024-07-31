@@ -214,34 +214,34 @@ const removeItem = () => {
 
 const getName = (key, index) => {
 
-  if (cardData.value.variants.shippingid != "Auto") {
-    const clean = key.replace(`${cardData.value.variants.shippingid};`, "").replace(`;${cardData.value.variants.shippingid}`, "")
-    const pairs = clean.split(';');
-    console.log("prop index : ", pairs[index])
-    const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
-    //console.log(skuPropertyId+":" + propertyValueId)
-    const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
-    if (matchingProp) {
-      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueIdLong == propertyValueId);
-      if (matchingValue) {
-        return matchingValue.skuPropertyTips;
-      }
+if (cardData.value.variants.shippingid != "Auto") {
+  const clean = key.replace(`${cardData.value.variants.shippingid};`, "").replace(`;${cardData.value.variants.shippingid}`, "")
+  const pairs = clean.split(';');
+  console.log("prop index : ", pairs[index])
+  const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
+  //console.log(skuPropertyId+":" + propertyValueId)
+  const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
+  if (matchingProp) {
+    const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueIdLong == propertyValueId);
+    if (matchingValue) {
+      return matchingValue.propertyValueDefinitionName;
     }
-  return 'nonValue';
-  } else {
-    const pairs = key.split(';');
-    console.log("prop index : ", pairs[index])
-    const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
-    //console.log(skuPropertyId+":" + propertyValueId)
-    const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
-    if (matchingProp) {
-      const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueIdLong == propertyValueId);
-      if (matchingValue) {
-        return matchingValue.skuPropertyTips;
-      }
-    }
-  return 'nonValue';
   }
+return 'nonValue';
+} else {
+  const pairs = key.split(';');
+  console.log("prop index : ", pairs[index])
+  const [ skuPropertyId, propertyValueId ] = pairs[index].split(':');
+  //console.log(skuPropertyId+":" + propertyValueId)
+  const matchingProp = cardData.value.variants.props.find(prop => prop.skuPropertyId == skuPropertyId);
+  if (matchingProp) {
+    const matchingValue = matchingProp.skuPropertyValues.find(value => value.propertyValueIdLong == propertyValueId);
+    if (matchingValue) {
+      return matchingValue.propertyValueDefinitionName;
+    }
+  }
+return 'nonValue';
+}
 };
 
 //
